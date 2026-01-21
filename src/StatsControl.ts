@@ -120,11 +120,19 @@ export class StatsControl{
         const days = Math.floor(totalSeconds / 60 / 60 / 24);
         this.valueElements[0].innerHTML = days + 'd ' + zerofill(hours) + ':' + zerofill(minutes) + ':' + zerofill(seconds);
         const deltaVkm = select_obj.totalDeltaV * AU;
+        const maxDeltaVkm = select_obj.maxDeltaV * AU;
         let deltaV;
-        if(deltaVkm < 10)
-            deltaV = (deltaVkm * 1e3).toFixed(1) + 'm/s';
-        else
-            deltaV = deltaVkm.toFixed(4) + 'km/s';
+        if(maxDeltaVkm > 0){
+            if(deltaVkm < 10)
+                deltaV = (deltaVkm * 1e3).toFixed(1) + ' / ' + (maxDeltaVkm * 1e3).toFixed(1) + ' m/s';
+            else
+                deltaV = deltaVkm.toFixed(4) + ' / ' + maxDeltaVkm.toFixed(4) + ' km/s';
+        } else {
+            if(deltaVkm < 10)
+                deltaV = (deltaVkm * 1e3).toFixed(1) + 'm/s';
+            else
+                deltaV = deltaVkm.toFixed(4) + 'km/s';
+        }
         this.valueElements[1].innerHTML = deltaV;
         this.valueElements[2].innerHTML = select_obj.ignitionCount.toString();
         this.valueElement.style.marginLeft = (buttonWidth - this.valueElement.getBoundingClientRect().width) + 'px';

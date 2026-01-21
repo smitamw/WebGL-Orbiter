@@ -96,6 +96,8 @@ export class ThrottleControl{
         const select_obj = this.getSelectObj();
         if(!select_obj)
             return;
+        if(select_obj.maxDeltaV > 0 && select_obj.totalDeltaV >= select_obj.maxDeltaV && pos > 0)
+            return; // Prevent increasing throttle when out of delta-V
         if(select_obj.throttle === 0. && 0. < pos)
             select_obj.ignitionCount++;
         select_obj.throttle = pos;

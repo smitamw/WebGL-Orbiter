@@ -89,8 +89,6 @@ function init() {
 
     } );
 
-    overlay = new Overlay();
-
     scene = new THREE.Scene();
 
     const orbitMaterial = new THREE.LineBasicMaterial({color: 0x3f3f7f});
@@ -99,11 +97,15 @@ function init() {
     gameState = new GameState({
         scene,
         viewScale,
-        overlay: overlay.overlay,
+        overlay: new THREE.Scene(),
         camera,
         windowHalfX,
         windowHalfY,
      }, settings, (msg) => messageControl.setText(msg));
+
+    overlay = new Overlay(buttons, () => gameState.getSelectObj());
+
+    gameState.graphicsParams.overlay = overlay.overlay;
 
     const meshMaterial = new THREE.LineBasicMaterial({color: 0x3f3f3f});
     const meshGeometry = new THREE.BufferGeometry();
@@ -387,7 +389,7 @@ function render() {
     renderer.render( scene, camera );
 
     if(select_obj){
-        overlay.update(select_obj);
+        overlay.update(select_obj, deltaTime);
         camera.position.set(0,0,0);
         camera.quaternion.set(1,0,0,0);
         overlay.render(renderer);
@@ -417,6 +419,27 @@ function onKeyDown( event: KeyboardEvent ) {
             break;
         case 'x':
             throttleControl.setThrottle(0);
+            break;
+        case 't':
+            overlay.toggleSAS();
+            break;
+        case '1':
+            overlay.setSASTarget(select_obj, 'prograde');
+            break;
+        case '2':
+            overlay.setSASTarget(select_obj, 'retrograde');
+            break;
+        case '3':
+            overlay.setSASTarget(select_obj, 'normal');
+            break;
+        case '4':
+            overlay.setSASTarget(select_obj, 'antinormal');
+            break;
+        case '5':
+            overlay.setSASTarget(select_obj, 'radialout');
+            break;
+        case '6':
+            overlay.setSASTarget(select_obj, 'radialin');
             break;
     }
 

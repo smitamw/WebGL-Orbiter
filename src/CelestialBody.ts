@@ -74,6 +74,7 @@ export class CelestialBody{
     controllable: boolean;
     throttle: number;
     totalDeltaV: number;
+    maxDeltaV: number;
     ignitionCount: number;
     name: string;
     static celestialBodies = new Map<string, CelestialBody>();
@@ -92,6 +93,7 @@ export class CelestialBody{
         this.controllable = false;
         this.throttle = 0.;
         this.totalDeltaV = 0.;
+        this.maxDeltaV = 0.;
         this.ignitionCount = 0;
         this.name = name;
         this.orbitalElements = orbitalElements || {
@@ -145,6 +147,7 @@ export class CelestialBody{
             quaternion: this.quaternion,
             angularVelocity: this.angularVelocity,
             totalDeltaV: this.totalDeltaV || undefined,
+            maxDeltaV: this.maxDeltaV || undefined,
             ignitionCount: this.ignitionCount || undefined,
         };
     }
@@ -164,6 +167,7 @@ export class CelestialBody{
         this.velocity = deserializeVector3(json.velocity);
         this.quaternion = deserializeQuaternion(json.quaternion);
         this.angularVelocity = deserializeVector3(json.angularVelocity);
+        this.maxDeltaV = json.maxDeltaV || 0;
         this.totalDeltaV = json.totalDeltaV || 0;
         this.ignitionCount = json.ignitionCount || 0;
     }
@@ -442,8 +446,16 @@ export class CelestialBody{
                     }
                     if(0 < select_obj.throttle){
                         const deltaV = acceleration * select_obj.throttle * deltaTime / div;
-                        select_obj.velocity.add(new THREE.Vector3(1, 0, 0).applyQuaternion(select_obj.quaternion).multiplyScalar(deltaV));
-                        select_obj.totalDeltaV += deltaV;
+                        let actualDeltaV = deltaV;
+                        if (select_obj.maxDeltaV > 0) {
+                            const remainingDeltaV = Math.max(0, select_obj.maxDeltaV - select_obj.totalDeltaV);
+                            actualDeltaV = Math.min(deltaV, remainingDeltaV);
+                        }
+                        select_obj.velocity.add(new THREE.Vector3(1, 0, 0).applyQuaternion(select_obj.quaternion).multiplyScalar(actualDeltaV));
+                        select_obj.totalDeltaV += actualDeltaV;
+                        if (select_obj.maxDeltaV > 0 && select_obj.totalDeltaV >= select_obj.maxDeltaV) {
+                            select_obj.throttle = 0;  // Auto-shutoff when limit reached
+                        }
                     }
                 }
                 const dvelo = accel.clone().multiplyScalar(0.5);
@@ -453,6 +465,37 @@ export class CelestialBody{
 
                 a.velocity.add(accel1);
                 a.position.add(velo1.multiplyScalar(deltaTime / div));
+                
+                // Collision detection for controllable objects (based on altitude)
+                if (select_obj === a && a.controllable) {
+                    // Check collision with parent (planet/moon we're orbiting)
+                    if (a.parent && a.parent.radius) {
+                        const altitude = a.position.length() - a.parent.radius / AU;
+                        if (altitude <= 0) {
+                            // Landed on the surface - set velocity to 0 relative to parent (stationary on surface)
+                            a.velocity.set(0, 0, 0); // In parent's reference frame
+                            // Position exactly on surface
+                            a.position.copy(a.position.clone().normalize().multiplyScalar(a.parent.radius / AU));
+                        }
+                    }
+                    
+                    // Check collision with sibling bodies (other planets/moons)
+                    for (const sibling of children) {
+                        if (sibling !== a && sibling.radius) {
+                            const distance = a.position.distanceTo(sibling.position);
+                            const altitude = distance - sibling.radius / AU;
+                            if (altitude <= 0) {
+                                // Collision with another body - set velocity to match the body's velocity
+                                a.velocity.copy(sibling.velocity); // Match orbital velocity
+                                // Position on surface
+                                const collisionDir = a.position.clone().sub(sibling.position).normalize();
+                                a.position.copy(sibling.position.clone().add(collisionDir.multiplyScalar(sibling.radius / AU)));
+                                break;
+                            }
+                        }
+                    }
+                }
+                
                 if(0 < a.angularVelocity.lengthSq()){
                     const axis = a.angularVelocity.clone().normalize();
                     // We have to multiply in this order!

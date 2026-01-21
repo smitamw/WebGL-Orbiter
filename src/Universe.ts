@@ -72,7 +72,7 @@ export default class Universe{
         this.orbitGeometry = orbitGeometry;
 
         const group = new THREE.Object3D();
-        const material = new THREE.MeshBasicMaterial( { color: "#ffffff" } );
+        const material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
 
         const Rsun = 695800.;
         const sunGeometry = new THREE.SphereGeometry( 1, 20, 20 );
@@ -83,6 +83,7 @@ export default class Universe{
 
         const sunMesh = new THREE.Mesh( sunGeometry, material );
         sunMesh.scale.setScalar(viewScale * Rsun / AU);
+        sunMesh.rotation.x = Math.PI / 2;
         group.add( sunMesh );
 
         scene.add(group);
