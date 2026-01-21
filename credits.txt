@@ -68,10 +68,17 @@ were obtained from
 
 http://planetpixelemporium.com/saturn.html
 
-
-
 Background Star Texture
 -----------------------
+
+"TychoSkymap.jpg" was obtained from:
+
+https://svs.gsfc.nasa.gov/3442/
+
+and renamed from "TychoSkymap_08192x04096.jpg"
+
+Background Star Texture, Alternate
+----------------------------------
 
 "hipparcoscyl1.jpg" was obtained from:
 

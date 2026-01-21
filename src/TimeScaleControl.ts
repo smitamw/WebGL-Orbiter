@@ -11,7 +11,7 @@ export class TimeScaleControl{
     protected text: HTMLDivElement;
     protected timeIndex: number;
     protected date: HTMLDivElement;
-    static series = [1, 5, 10, 100, 1e3, 1e4, 1e5, 1e6];
+    static series = [1, 5, 10, 100, 1e3, 1e4, 1e5, 1e6, 1e7];
 
     constructor(setTimeScale: (scale: number) => boolean){
         this.setTimeScale = setTimeScale;
@@ -31,7 +31,7 @@ export class TimeScaleControl{
             this.forwards.push(forward);
         }
         this.text = document.createElement('div');
-        this.text.innerHTML = 'Timescale: x1';
+        this.text.innerHTML = 'Timescale: 1x';
         this.domElement.appendChild(this.text);
         this.date = document.createElement('div');
         this.domElement.appendChild(this.date);
@@ -42,7 +42,7 @@ export class TimeScaleControl{
             return;
         for(let i = 0; i < this.forwards.length; i++)
             this.forwards[i].src = i <= number ? forwardActiveUrl : forwardInactiveUrl;
-        this.text.innerHTML = 'Timescale: x' + TimeScaleControl.series[number];
+        this.text.innerHTML = 'Timescale: ' + TimeScaleControl.series[number] + 'x';
         this.timeIndex = number;
     }
 

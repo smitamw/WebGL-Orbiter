@@ -21,6 +21,8 @@ export class Settings{
     show_label = true;
     show_marker = true;
     center_select = true;
+    alternative_skybox = false;
+    show_orbits = true;
 }
 
 export class SettingsControl{
@@ -91,7 +93,9 @@ export class SettingsControl{
                 'Units in KM&nbsp;(K)',
                 'Show name labels&nbsp;(L)',
                 'Show marker&nbsp;(M)',
-                'Center selected&nbsp;(C)'][i];
+                'Center selected&nbsp;(C)',
+                'Use Alternative Skybox',
+                'Show Orbit Lines&nbsp;(T)'][i];
             lineElement.appendChild(label);
             lineElement.style.fontWeight = 'bold';
             lineElement.style.paddingRight = '1em';
@@ -137,6 +141,8 @@ export class SettingsControl{
         this.checkElements[3].checked = this.settings.units_km;
         this.checkElements[4].checked = this.settings.show_label;
         this.checkElements[5].checked = this.settings.show_marker;
+        this.checkElements[6].checked = this.settings.alternative_skybox;
+        this.checkElements[7].checked = this.settings.show_orbits;
         this.valueElement.style.marginLeft = (this.config.buttonWidth - this.valueElement.getBoundingClientRect().width) + 'px';
     }
 
@@ -169,6 +175,10 @@ export class SettingsControl{
 
         case 'm':
             this.settings.show_marker = !this.settings.show_marker;
+            break;
+
+        case 't':
+            this.settings.show_orbits = !this.settings.show_orbits;
             break;
         }
     }

@@ -20,6 +20,8 @@ import Overlay from './Overlay';
 import GameState from './GameState';
 
 import backgroundUrl from './images/hipparcoscyl1.jpg';
+import tychoUrl from './images/TychoSkymap.jpg';
+
 
 
 let container: HTMLElement;
@@ -44,6 +46,9 @@ let scenarioSelectorControl: ScenarioSelectorControl;
 let saveControl: SaveControl;
 let loadControl: LoadControl;
 
+// Add backgroundMesh declaration for use throughout the file
+let backgroundMesh: THREE.Mesh | undefined;
+
 let windowHalfX = window.innerWidth / 2;
 let windowHalfY = window.innerHeight / 2;
 let viewScale = 100;
@@ -54,6 +59,9 @@ let settings = new Settings();
 let buttons = new RotationButtons();
 let accelerate = false;
 let decelerate = false;
+
+// Track last skybox setting for background switching
+let lastAlternativeSkybox = settings.alternative_skybox;
 
 function init() {
 
@@ -78,7 +86,8 @@ function init() {
     background = new THREE.Scene();
     background.rotation.x = Math.PI / 2;
     const loader = new THREE.TextureLoader();
-    loader.load( backgroundUrl, function ( texture ) {
+    const currentSkyboxUrl = settings.alternative_skybox ? backgroundUrl : tychoUrl;
+    loader.load( currentSkyboxUrl, function ( texture ) {
 
         const geometry = new THREE.SphereGeometry( 2, 20, 20 );
 
@@ -86,6 +95,7 @@ function init() {
         material.depthWrite = false;
         const mesh = new THREE.Mesh(geometry, material);
         background.add(mesh);
+        backgroundMesh = mesh;
 
     } );
 
@@ -346,6 +356,19 @@ function render() {
     settingsControl.setText();
     messageControl.timeStep(realDeltaTimeMilliSec * 1e-3);
 
+    // Check for skybox change
+    if (lastAlternativeSkybox !== settings.alternative_skybox) {
+        lastAlternativeSkybox = settings.alternative_skybox;
+        const newSkyboxUrl = settings.alternative_skybox ? backgroundUrl : tychoUrl;
+        const loader = new THREE.TextureLoader();
+        loader.load(newSkyboxUrl, function (texture) {
+            if (backgroundMesh && backgroundMesh.material instanceof THREE.MeshBasicMaterial) {
+                backgroundMesh.material.map = texture;
+                backgroundMesh.material.needsUpdate = true;
+            }
+        });
+    }
+
     camera.near = Math.min(1, cameraControls.target.distanceTo(camera.position) / 10);
     camera.updateProjectionMatrix();
 
@@ -420,8 +443,11 @@ function onKeyDown( event: KeyboardEvent ) {
         case 'x':
             throttleControl.setThrottle(0);
             break;
-        case 't':
+        case 'f':
             overlay.toggleSAS();
+            break;
+        case 't':
+            settings.show_orbits = !settings.show_orbits;
             break;
         case '1':
             overlay.setSASTarget(select_obj, 'prograde');

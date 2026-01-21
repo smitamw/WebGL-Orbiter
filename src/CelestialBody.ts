@@ -336,14 +336,14 @@ export class CelestialBody{
                 this.hyperbolicMesh.position.multiplyScalar(viewScale);
 
                 // Switch from ellipse to hyperbola
-                this.hyperbolicMesh.visible = true;
+                this.hyperbolicMesh.visible = settings.show_orbits;
                 if(this.orbit)
                     this.orbit.visible = false;
             }
             else if(this.hyperbolicMesh){
                 // Switch back to ellipse from hyperbola
                 if(this.orbit)
-                    this.orbit.visible = true;
+                    this.orbit.visible = settings.show_orbits;
                 this.hyperbolicMesh.visible = false;
             }
 
@@ -356,18 +356,19 @@ export class CelestialBody{
                 if(select_obj && center_select)
                     this.orbit.position.sub(select_obj.getWorldPosition());
                 this.orbit.position.multiplyScalar(viewScale);
+                this.orbit.visible = settings.show_orbits;
             }
 
             if(this.apoapsis){
                 // if eccentricity is zero or more than 1, apoapsis is not defined
-                if(this === select_obj && this.controllable && 0 < orbitalElements.eccentricity && orbitalElements.eccentricity < 1)
+                if(this === select_obj && this.controllable && 0 < orbitalElements.eccentricity && orbitalElements.eccentricity < 1 && settings.show_orbits)
                     calcApsePosition(-1, this.apoapsis);
                 else
                     this.apoapsis.visible = false;
             }
             if(this.periapsis){
                 // if eccentricity is zero, periapsis is not defined
-                if(this === select_obj && this.controllable && 0 < orbitalElements.eccentricity)
+                if(this === select_obj && this.controllable && 0 < orbitalElements.eccentricity && settings.show_orbits)
                     calcApsePosition(1, this.periapsis);
                 else
                     this.periapsis.visible = false;
