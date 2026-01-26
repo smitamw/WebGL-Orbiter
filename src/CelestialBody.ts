@@ -72,6 +72,7 @@ export class CelestialBody{
     sphereOfInfluence: number;
 
     controllable: boolean;
+    vehicleType: string = 'rocket';
     throttle: number;
     totalDeltaV: number;
     maxDeltaV: number;
@@ -246,6 +247,24 @@ export class CelestialBody{
             this.model.position.copy(visualPosition(this));
             this.model.scale.set(1,1,1).multiplyScalar(nlipsFactor(this));
             this.model.quaternion.copy(this.quaternion);
+        }
+
+        // Apply rocket color if controllable
+        if(this.controllable && this.model){
+            this.model.traverse((child) => {
+                if(child instanceof THREE.Mesh && child.material){
+                    const mat = child.material;
+                    if(Array.isArray(mat)){
+                        mat.forEach(m => {
+                            if((m as any).color) (m as any).color.set(settings.rocket_color);
+                            m.needsUpdate = true;
+                        });
+                    } else {
+                        if((mat as any).color) (mat as any).color.set(settings.rocket_color);
+                        mat.needsUpdate = true;
+                    }
+                }
+            });
         }
 
         let headingApoapsis = 0;
@@ -445,7 +464,21 @@ export class CelestialBody{
                         else
                             select_obj.angularVelocity.set(0, 0, 0);
                     }
-                    if(0 < select_obj.throttle){
+                    // Solar sail thrust
+                    if(select_obj.vehicleType === 'solarsail'){
+                        const direction_to_sun = a.position.clone().negate().normalize();
+                        const sail_normal = new THREE.Vector3(1, 0, 0).applyQuaternion(a.quaternion);
+                        const cos_theta = sail_normal.dot(direction_to_sun);
+                        const theta = Math.acos(Math.abs(cos_theta));
+                        const R = a.position.length() / AU;
+                        const F0 = 1e-6; // Solar sail force constant, tune as needed
+                        const F = F0 * Math.cos(theta) * Math.cos(theta) / (R * R);
+                        const mass = a.GM; // Since G=1 in units
+                        const a_thrust = F / mass;
+                        const thrust_direction = cos_theta >= 0 ? sail_normal : sail_normal.clone().negate();
+                        a.velocity.add(thrust_direction.multiplyScalar(a_thrust * deltaTime / div));
+                    }
+                    if(0 < select_obj.throttle && select_obj.vehicleType !== 'solarsail'){
                         const deltaV = acceleration * select_obj.throttle * deltaTime / div;
                         let actualDeltaV = deltaV;
                         if (select_obj.maxDeltaV > 0) {

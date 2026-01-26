@@ -23,6 +23,7 @@ export class Settings{
     center_select = true;
     alternative_skybox = false;
     show_orbits = true;
+    rocket_color = '#ffffff';
 }
 
 export class SettingsControl{
@@ -77,13 +78,20 @@ export class SettingsControl{
             if(name === 'center_select')
                 continue;
             const lineElement = document.createElement('div');
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.onclick = ((a: any, field) => (event: MouseEvent) => a[field] = !a[field])(this.settings, name);
+            let input: HTMLInputElement;
+            if(name === 'rocket_color'){
+                input = document.createElement('input');
+                input.type = 'color';
+                input.addEventListener('input', ((a: any, field) => (event: Event) => a[field] = (event.target as HTMLInputElement).value)(this.settings, name));
+            } else {
+                input = document.createElement('input');
+                input.type = 'checkbox';
+                input.onclick = ((a: any, field) => (event: MouseEvent) => a[field] = !a[field])(this.settings, name);
+            }
             const id = 'settings_check_' + i;
-            checkbox.setAttribute('id', id);
-            lineElement.appendChild(checkbox);
-            this.checkElements.push(checkbox);
+            input.setAttribute('id', id);
+            lineElement.appendChild(input);
+            this.checkElements.push(input);
             const label = document.createElement('label');
             label.setAttribute('for', id);
             label.innerHTML = [
@@ -95,7 +103,8 @@ export class SettingsControl{
                 'Show marker&nbsp;(M)',
                 'Center selected&nbsp;(C)',
                 'Use Alternative Skybox',
-                'Show Orbit Lines&nbsp;(T)'][i];
+                'Show Orbit Lines',
+                'Pick Rocket Color'][i];
             lineElement.appendChild(label);
             lineElement.style.fontWeight = 'bold';
             lineElement.style.paddingRight = '1em';
@@ -143,16 +152,13 @@ export class SettingsControl{
         this.checkElements[5].checked = this.settings.show_marker;
         this.checkElements[6].checked = this.settings.alternative_skybox;
         this.checkElements[7].checked = this.settings.show_orbits;
+        (this.checkElements[8] as HTMLInputElement).value = this.settings.rocket_color;
         this.valueElement.style.marginLeft = (this.config.buttonWidth - this.valueElement.getBoundingClientRect().width) + 'px';
     }
 
     onKeyDown(event: KeyboardEvent){
         const char = String.fromCharCode(event.which || event.keyCode).toLowerCase();
         switch(char){
-        case 'c':
-            this.settings.center_select = !this.settings.center_select;
-            break;
-
         case 'n': // toggle NLIPS
             this.settings.nlips_enable = !this.settings.nlips_enable;
             break;

@@ -12,6 +12,7 @@ export class ScenarioSelectorControl extends MenuControl{
     protected showEvent: () => void;
     protected selectedScenario: any;
     protected selectedDeltaV: number;
+    protected selectedVehicle: string;
 
     constructor(
         getRocket: () => CelestialBody,
@@ -33,6 +34,7 @@ export class ScenarioSelectorControl extends MenuControl{
         this.showEvent = showEvent;
         this.selectedScenario = null;
         this.selectedDeltaV = 5;
+        this.selectedVehicle = 'rocket';
 
         this.valueElement.style.border = "5px ridge #ffff7f";
         this.valueElement.style.display = "flex";
@@ -99,6 +101,17 @@ export class ScenarioSelectorControl extends MenuControl{
         deltaVSelect.onchange = () => this.selectedDeltaV = parseFloat(deltaVSelect.value);
         rightDiv.appendChild(deltaVSelect);
 
+        // Vehicle select
+        const vehicleLabel = document.createElement('h3');
+        vehicleLabel.innerHTML = "Vehicle";
+        rightDiv.appendChild(vehicleLabel);
+        const vehicleSelect = document.createElement('select');
+        vehicleSelect.style.width = "100%";
+        vehicleSelect.appendChild(new Option("Rocket", "rocket"));
+        vehicleSelect.appendChild(new Option("Solar Sail", "solarsail"));
+        vehicleSelect.onchange = () => this.selectedVehicle = vehicleSelect.value;
+        rightDiv.appendChild(vehicleSelect);
+
         layoutDiv.appendChild(leftDiv);
         layoutDiv.appendChild(rightDiv);
         this.valueElement.appendChild(layoutDiv);
@@ -135,6 +148,7 @@ export class ScenarioSelectorControl extends MenuControl{
             select_obj.totalDeltaV = 0.;
             select_obj.maxDeltaV = this.selectedDeltaV === -1 ? 0 : this.selectedDeltaV / AU; // Convert km/s to AU/s, 0 for infinite
             select_obj.ignitionCount = 0;
+            select_obj.vehicleType = this.selectedVehicle;
             setSelectObj(select_obj);
             resetTime();
             sendMessage('Scenario ' + this.selectedScenario.title + ' Loaded with ' + (this.selectedDeltaV === -1 ? 'Infinite' : this.selectedDeltaV + ' km/s') + ' delta-V!');

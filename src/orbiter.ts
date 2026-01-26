@@ -471,10 +471,10 @@ function onKeyDown( event: KeyboardEvent ) {
 
     // Annoying browser incompatibilities
     const code = event.which || event.keyCode;
-    // Also support numpad plus and minus
-    if(code === 107 || code === 187 && event.shiftKey)
+    // Timescale increase/decrease with period and comma
+    if(code === 190) // period
         timescaleControl.increment();
-    if(code === 109 || code === 189)
+    if(code === 188) // comma
         timescaleControl.decrement();
     if(code === 16)
         accelerate = true;

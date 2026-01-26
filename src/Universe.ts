@@ -25,6 +25,8 @@ import saturnRingAlphaUrl from './images/saturnringpattern.gif';
 import earthUrl from './images/land_ocean_ice_cloud_2048.jpg';
 import rocketModelUrl from './rocket.obj';
 import rocketMtlUrl from './rocket.mtl';
+import solarsailModelUrl from './solarsail.obj';
+import solarsailMtlUrl from './solarsail.mtl';
 import perlinUrl from './images/perlin.jpg';
 
 const GMsun = 1.327124400e11 / AU / AU/ AU; // Product of gravitational constant (G) and Sun's mass (Msun)
@@ -364,13 +366,30 @@ export default class Universe{
             radius: 0.1,
             modelName: rocketModelUrl,
             mtlName: rocketMtlUrl,
-            modelColor: COLOR_PALETTE[Math.floor(Math.random() * COLOR_PALETTE.length)],
             controllable: true
         },
         graphicsParams, this.orbitGeometry, settings);
         rocket.quaternion.multiply(AxisAngleQuaternion(1, 0, 0, Math.PI / 2)).multiply(AxisAngleQuaternion(0, 1, 0, Math.PI / 2));
-
+        rocket.vehicleType = 'rocket';
         return rocket;
+    }
+
+    addSolarSail(name: string, orbitalElements: OrbitalElements, parent: CelestialBody, graphicsParams: GraphicsParams, settings: Settings){
+        const solarsail = addPlanet(orbitalElements,
+        {
+            name,
+            parent,
+            color: "#ffff7f",
+            GM: 100 / AU / AU / AU,
+            radius: 0.1,
+            modelName: solarsailModelUrl,
+            mtlName: solarsailMtlUrl,
+            controllable: true
+        },
+        graphicsParams, this.orbitGeometry, settings);
+        solarsail.quaternion.multiply(AxisAngleQuaternion(1, 0, 0, Math.PI / 2)).multiply(AxisAngleQuaternion(0, 1, 0, Math.PI / 2));
+        solarsail.vehicleType = 'solarsail';
+        return solarsail;
     }
 
     update(center_select: boolean, viewScale: number, settings: Settings,
