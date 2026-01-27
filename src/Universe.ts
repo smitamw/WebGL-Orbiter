@@ -1,4 +1,5 @@
 import * as THREE from 'three/src/Three';
+import { Lensflare, LensflareElement } from 'three/examples/jsm/objects/Lensflare.js';
 
 import { CelestialBody, OrbitalElements, AU, AxisAngleQuaternion, AddPlanetParams, addPlanet } from './CelestialBody';
 import { Settings } from './SettingsControl';
@@ -61,6 +62,7 @@ export default class Universe{
     rocket: CelestialBody;
     light: THREE.PointLight;
     orbitGeometry: THREE.BufferGeometry;
+    lensflareElements: LensflareElement[];
 
     constructor(graphicsParams: GraphicsParams, settings: Settings){
         const { scene, viewScale, camera, windowHalfX, windowHalfY } = graphicsParams;
@@ -87,6 +89,55 @@ export default class Universe{
         sunMesh.scale.setScalar(viewScale * Rsun / AU);
         sunMesh.rotation.x = Math.PI / 2;
         group.add( sunMesh );
+
+        // Add lensflare to the light
+        const lensflare = new Lensflare();
+        this.lensflareElements = [];
+        
+        // Create circular textures for lensflare elements
+        const createLensflareTexture = (size: number, color: string = '#ffffff', opacity: number = 1.0) => {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const context = canvas.getContext('2d')!;
+            
+            const centerX = size / 2;
+            const centerY = size / 2;
+            const radius = size / 2;
+            
+            // Create radial gradient for glow effect
+            const gradient = context.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
+            gradient.addColorStop(0, color + Math.floor(opacity * 255).toString(16).padStart(2, '0'));
+            gradient.addColorStop(0.7, color + Math.floor(opacity * 128).toString(16).padStart(2, '0'));
+            gradient.addColorStop(1, color + '00');
+            
+            context.fillStyle = gradient;
+            context.fillRect(0, 0, size, size);
+            
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.needsUpdate = true;
+            return texture;
+        };
+
+        // Add lensflare elements with different sizes and distances
+        const element1 = new LensflareElement(createLensflareTexture(512, '#ffffff', 0.8), 512, 0, new THREE.Color(0xffffff));
+        const element2 = new LensflareElement(createLensflareTexture(512, '#ffff88', 0.6), 512, 0, new THREE.Color(0xffff88));
+        const element3 = new LensflareElement(createLensflareTexture(60, '#ffffff', 0.9), 60, 0.6, new THREE.Color(0xffffff));
+        const element4 = new LensflareElement(createLensflareTexture(70, '#ffaa44', 0.8), 70, 0.7, new THREE.Color(0xffaa44));
+        const element5 = new LensflareElement(createLensflareTexture(120, '#ffffff', 0.7), 120, 0.9, new THREE.Color(0xffffff));
+        const element6 = new LensflareElement(createLensflareTexture(70, '#88aaff', 0.6), 70, 1.0, new THREE.Color(0x88aaff));
+        
+        lensflare.addElement(element1);
+        lensflare.addElement(element2);
+        lensflare.addElement(element3);
+        lensflare.addElement(element4);
+        lensflare.addElement(element5);
+        lensflare.addElement(element6);
+        
+        // Store references to elements for scaling
+        this.lensflareElements = [element1, element2, element3, element4, element5, element6];
+        
+        this.light.add(lensflare);
 
         scene.add(group);
 
@@ -401,6 +452,21 @@ export default class Universe{
             updateOrbitalElements,
             scene,
             select_obj);
+
+        // Update lensflare size to be slightly larger than the Sun's apparent size
+        const sunScale = this.sun.model.scale.x; // Sun's current scale factor
+        const sunRadius = 695800; // Physical radius of Sun in km
+        const au = AU; // Astronomical unit
+        
+        // Calculate what the base lensflare size should be relative to Sun's rendered size
+        // The Sun's rendered radius is sunScale, so make lensflare elements slightly larger
+        const scaleFactor = sunScale * 0.7; // 20% larger than the Sun
+        
+        // Update lensflare element sizes using stored references
+        const baseSizes = [512, 512, 60, 70, 120, 70];
+        this.lensflareElements.forEach((element: LensflareElement, index: number) => {
+            element.size = baseSizes[index] * scaleFactor;
+        });
 
         // offset sun position
         this.light.position.copy(this.sun.model.position);
