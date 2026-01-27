@@ -447,7 +447,7 @@ export class CelestialBody{
             if(sl !== 0){
                 const angleAcceleration = 1e-0;
                 const accel = a.position.clone().negate().normalize().multiplyScalar(deltaTime / div * a.parent.GM / sl);
-                if(select_obj === a && select_obj.controllable && timescale <= 1){
+                if(select_obj === a && select_obj.controllable && timescale <= 5){
                     if(buttons.up) select_obj.angularVelocity.add(new THREE.Vector3(0, 0, 1).applyQuaternion(select_obj.quaternion).multiplyScalar(angleAcceleration * deltaTime / div));
                     if(buttons.down) select_obj.angularVelocity.add(new THREE.Vector3(0, 0, -1).applyQuaternion(select_obj.quaternion).multiplyScalar(angleAcceleration * deltaTime / div));
                     if(buttons.left) select_obj.angularVelocity.add(new THREE.Vector3(0, 1, 0).applyQuaternion(select_obj.quaternion).multiplyScalar(angleAcceleration * deltaTime / div));
@@ -465,13 +465,13 @@ export class CelestialBody{
                             select_obj.angularVelocity.set(0, 0, 0);
                     }
                     // Solar sail thrust
-                    if(select_obj.vehicleType === 'solarsail'){
+                    if(select_obj.vehicleType === 'solarsail' && timescale <= 5){
                         const direction_to_sun = a.position.clone().negate().normalize();
                         const sail_normal = new THREE.Vector3(1, 0, 0).applyQuaternion(a.quaternion);
                         const cos_theta = sail_normal.dot(direction_to_sun);
                         const theta = Math.acos(Math.abs(cos_theta));
                         const R = a.position.length() / AU;
-                        const F0 = 1e-6; // Solar sail force constant, tune as needed
+                        const F0 = 1e-10; // Solar sail force constant, much smaller value
                         const F = F0 * Math.cos(theta) * Math.cos(theta) / (R * R);
                         const mass = a.GM; // Since G=1 in units
                         const a_thrust = F / mass;

@@ -97,8 +97,8 @@ export default class GameState{
     }
 
     setTimeScale(scale: number){
-        if(this.select_obj && 0 < this.select_obj.throttle){
-            this.sendMessage('You cannot timewarp while accelerating');
+        if(this.select_obj && 0 < this.select_obj.throttle && scale > 5){
+            this.sendMessage('Cannot timewarp over 5x when thrusting');
             return false;
         }
         this.timescale = scale;
@@ -106,8 +106,8 @@ export default class GameState{
     }
 
     allowThrottle(pos: number){
-        if(1 < this.timescale && 0 < pos){
-            this.sendMessage('You cannot accelerate while timewarping');
+        if(5 < this.timescale && 0 < pos){
+            this.sendMessage('Cannot thrust when timewarp is over 5x');
             return false;
         }
         if(!this.select_obj || !this.select_obj.controllable){

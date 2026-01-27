@@ -103,8 +103,8 @@ export class RotationControl{
         addArrow(rotateDownUrl, 'down', navballRadius - buttonWidth / 2, 2 * navballRadius - buttonHeight);
         addArrow(rotateLeftUrl, 'left', 0, navballRadius - buttonHeight / 2);
         addArrow(rotateRightUrl, 'right', 2 * navballRadius - buttonWidth, navballRadius - buttonHeight / 2);
-        addArrow(rotateCwUrl, 'clockwise', 2 * navballRadius - buttonWidth, 0);
-        addArrow(rotateCcwUrl, 'counterclockwise', 0, 0);
+        addArrow(rotateCcwUrl, 'clockwise', 0, 0);
+        addArrow(rotateCwUrl, 'counterclockwise', 2 * navballRadius - buttonWidth, 0);
         window.addEventListener('resize', (e: UIEvent) => this.setSize);
         window.addEventListener( 'keydown', (e: KeyboardEvent) => this.onKeyDown(e), false );
         window.addEventListener( 'keyup', (e: KeyboardEvent) => this.onKeyUp(e), false );
@@ -123,11 +123,11 @@ export class RotationControl{
                 buttons.down = true;
     //						retrograde = true;
                 break;
-            case 'q': // normal
+            case 'e': // normal
                 buttons.counterclockwise = true;
     //						normal = true;
                 break;
-            case 'e': // normal negative
+            case 'q': // normal negative
                 buttons.clockwise = true;
     //						antinormal = true;
                 break;
@@ -153,11 +153,11 @@ export class RotationControl{
                 buttons.down = false;
     //						retrograde = false;
                 break;
-            case 'q': // prograde
+            case 'e': // normal
                 buttons.counterclockwise = false;
     //						normal = false;
                 break;
-            case 'e':
+            case 'q': // normal negative
                 buttons.clockwise = false;
     //						antinormal = false;
                 break;
