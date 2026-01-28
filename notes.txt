@@ -1,1 +1,9 @@
-C:\Users\amol\projects\WebGL-Orbiter>set NODE_OPTIONS=--openssl-legacy-provider
+To run locally:
+
+1. Install Node.js
+
+2. In the folder the simulation files are in, run the following:
+	set NODE_OPTIONS=--openssl-legacy-provider
+
+3. Run the below command, go to the link (defaults to localhost:8080) and enjoy!
+	npm run start

@@ -24,6 +24,7 @@ export class Settings{
     alternative_skybox = false;
     show_orbits = true;
     rocket_color = '#ffffff';
+    lensflare_size = 10;
 }
 
 export class SettingsControl{
@@ -83,6 +84,14 @@ export class SettingsControl{
                 input = document.createElement('input');
                 input.type = 'color';
                 input.addEventListener('input', ((a: any, field) => (event: Event) => a[field] = (event.target as HTMLInputElement).value)(this.settings, name));
+            } else if(name === 'lensflare_size'){
+                input = document.createElement('input');
+                input.type = 'range';
+                input.min = '0';
+                input.max = '10';
+                input.step = '1';
+                input.style.width = '150px';
+                input.addEventListener('input', ((a: any, field) => (event: Event) => a[field] = parseInt((event.target as HTMLInputElement).value))(this.settings, name));
             } else {
                 input = document.createElement('input');
                 input.type = 'checkbox';
@@ -104,7 +113,8 @@ export class SettingsControl{
                 'Center selected&nbsp;(C)',
                 'Use Alternative Skybox',
                 'Show Orbit Lines',
-                'Pick Rocket Color'][i];
+                'Pick Rocket Color',
+                'Lensflare Size (0-10)'][i];
             lineElement.appendChild(label);
             lineElement.style.fontWeight = 'bold';
             lineElement.style.paddingRight = '1em';
@@ -153,6 +163,7 @@ export class SettingsControl{
         this.checkElements[6].checked = this.settings.alternative_skybox;
         this.checkElements[7].checked = this.settings.show_orbits;
         (this.checkElements[8] as HTMLInputElement).value = this.settings.rocket_color;
+        (this.checkElements[9] as HTMLInputElement).value = this.settings.lensflare_size.toString();
         this.valueElement.style.marginLeft = (this.config.buttonWidth - this.valueElement.getBoundingClientRect().width) + 'px';
     }
 

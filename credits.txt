@@ -55,6 +55,14 @@ http://planetpixelemporium.com/jupiter.html
 and renamed from "jupiter2_1k.jpg"
 
 
+Europa Texture
+--------------
+"europa.jpg" was obtained from:
+
+https://www.deviantart.com/askaniy/art/Europa-Texture-Map-20K-769790967
+
+and renamed from "europa_texture_map__20k__by_askaniy_dcqbaif-fullview.jpg"
+
 Saturn and its rings texture
 ----------------------------
 

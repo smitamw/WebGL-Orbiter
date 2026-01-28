@@ -24,6 +24,7 @@ import saturnUrl from './images/saturn.jpg';
 import saturnRingUrl from './images/saturnringcolor.jpg';
 import saturnRingAlphaUrl from './images/saturnringpattern.gif';
 import earthUrl from './images/land_ocean_ice_cloud_2048.jpg';
+import europaUrl from './images/europa.jpg';
 import rocketModelUrl from './rocket.obj';
 import rocketMtlUrl from './rocket.mtl';
 import solarsailModelUrl from './solarsail.obj';
@@ -92,6 +93,10 @@ export default class Universe{
 
         // Add lensflare to the light
         const lensflare = new Lensflare();
+        
+        // Set lensflare to render on top of the sun mesh by disabling depth write on the sun
+        // This allows the lensflare to appear unoccluded by the sun sphere
+        material.depthWrite = false;
         this.lensflareElements = [];
         
         // Create circular textures for lensflare elements
@@ -352,6 +357,25 @@ export default class Universe{
             },
         });
 
+        const europa = addPlanetLocal({
+            semimajor_axis: 670900 / AU,
+            eccentricity: 0.009,
+            inclination: 0.471 * rad_per_deg,
+            ascending_node: 190.65 * rad_per_deg,
+            argument_of_perihelion: 62.266 * rad_per_deg
+        },
+        {
+            name: "europa",
+            parent: jupiter,
+            color: "#7f7f7f",
+            texture: europaUrl,
+            GM: 3202.7 / AU / AU / AU,
+            radius: 1560.8,
+            axialTilt: 0.1 * rad_per_deg,
+            rotationPeriod: 3.551 * day,
+            sphereOfInfluence: 8e4,
+        });
+
         // Use icosahedron instead of sphere to make it look like uniform
         // TODO: use simplex noise to make more smooth asteroid
         const asteroidGeometry = new ModulatedIcosahedronGeometry( 1, 2, (vec) => vec.multiplyScalar(0.3 * (Math.random() - 0.5) + 1) );
@@ -453,23 +477,30 @@ export default class Universe{
             scene,
             select_obj);
 
-        // Update lensflare size to be slightly larger than the Sun's apparent size
+        // Update sun light position first
+        this.light.position.copy(this.sun.model.position);
+
+        // Update lensflare size based on sun scale, distance, and slider setting
         const sunScale = this.sun.model.scale.x; // Sun's current scale factor
-        const sunRadius = 695800; // Physical radius of Sun in km
-        const au = AU; // Astronomical unit
+        const distance = camera.position.distanceTo(this.light.position);
         
-        // Calculate what the base lensflare size should be relative to Sun's rendered size
-        // The Sun's rendered radius is sunScale, so make lensflare elements slightly larger
-        const scaleFactor = sunScale * 0.7; // 20% larger than the Sun
+        // Scale factor based on sun size (rendered size)
+        const sunSizeScale = sunScale * 1.2; // Make lensflare slightly larger than sun
+        
+        // Scale factor based on distance (closer = bigger effect)
+        // At 1 AU, distance scale is 1.0
+        const baseDistance = AU * viewScale;
+        const distanceScale = baseDistance / Math.max(distance, baseDistance * 0.1);
+        
+        // Combine scales and apply slider setting (0-10, where 10 is normal)
+        const sliderFactor = settings.lensflare_size / 10;
+        const combinedScale = sunSizeScale * Math.pow(distanceScale, 0.3) * sliderFactor;
         
         // Update lensflare element sizes using stored references
         const baseSizes = [512, 512, 60, 70, 120, 70];
         this.lensflareElements.forEach((element: LensflareElement, index: number) => {
-            element.size = baseSizes[index] * scaleFactor;
+            element.size = baseSizes[index] * combinedScale;
         });
-
-        // offset sun position
-        this.light.position.copy(this.sun.model.position);
     }
 
     simulateBody(deltaTime: number, div: number, timescale: number, buttons: RotationButtons, select_obj?: CelestialBody){
