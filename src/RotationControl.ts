@@ -115,11 +115,11 @@ export class RotationControl{
 
         const buttons = this.buttons;
         switch( char ){
-            case 'w': // prograde
+            case 's': // prograde
                 buttons.up = true;
     //						prograde = true;
                 break;
-            case 's': // retrograde
+            case 'w': // retrograde
                 buttons.down = true;
     //						retrograde = true;
                 break;
@@ -145,11 +145,11 @@ export class RotationControl{
     onKeyUp(event: KeyboardEvent){
         const buttons = this.buttons;
         switch ( String.fromCharCode(event.which || event.keyCode).toLowerCase() ) {
-            case 'w': // prograde
+            case 's': // prograde
                 buttons.up = false;
     //						prograde = false;
                 break;
-            case 's':
+            case 'w':
                 buttons.down = false;
     //						retrograde = false;
                 break;

@@ -663,6 +663,19 @@ export function addPlanet(orbitalElements: OrbitalElements,
 
             const geometry = new THREE.SphereGeometry( 1, 20, 20 );
 
+            // Ensure correct color encoding for textures (fixes dark/black appearance for some JPGs)
+            if(texture){
+                // Preserve original appearance for Ganymede by skipping forced sRGB encoding
+                if(params.name !== 'ganymede'){
+                    texture.encoding = THREE.sRGBEncoding;
+                }
+                texture.needsUpdate = true;
+            }
+            if(ringTexture){
+                ringTexture.encoding = THREE.sRGBEncoding;
+                ringTexture.needsUpdate = true;
+            }
+
             const material = new THREE.MeshLambertMaterial( { map: texture, color: 0xffffff, flatShading: false } );
             const mesh = new THREE.Mesh( geometry, material );
             const radiusInAu = viewScale * (params.radius || 6534) / AU;

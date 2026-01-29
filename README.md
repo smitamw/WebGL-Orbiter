@@ -6,11 +6,13 @@
 An orbit simulator for the solar system in real scale with Newtonian dynamics,
 which can be manipulated like amazing game Kerbal Space Program.
 
-Try it now on your browser!
+This is forked off of and is heavily based off of msakuta's WebGL-Orbiter, which is responsible for the majority of the code. You can try their version here:
 
 https://msakuta.github.io/WebGL-Orbiter/index.html
 
 ## Screenshots
+
+![](screenshots/screenshot7.jpg)
 
 ![](screenshots/screenshot6.jpg)
 
@@ -26,8 +28,8 @@ https://msakuta.github.io/WebGL-Orbiter/index.html
 
 ## Controls
 
-* '+' key increases simulation speed of time
-* '-' key decreases simulation speed of time
+* '.' (period) key increases simulation speed of time
+* ',' (comma) key decreases simulation speed of time
 * 'W' key rotates the vehicle upward
 * 'S' key rotates the vehicle downward
 * 'A' key rotates the vehicle left
@@ -35,11 +37,11 @@ https://msakuta.github.io/WebGL-Orbiter/index.html
 * 'Q' key rotates the vehicle counterclockwise
 * 'E' key rotates the vehicle clockwise
 * 'Z' key sets the throttle to maximum
-* 'X' key sets the throttle to zero (halts the engine)
+* 'X' key sets the throttle to zero
 * Shift key gradually increases throttle
 * Ctrl key gradually decreases throttle
 * 'H' key toggles camera chase mode
-* 'G' key toggles grids
+* 'G' key toggles reference grid
 
 
 ## Autosave feature
@@ -96,7 +98,7 @@ Note that the rotation has inertia; the longer you hold pressing, the faster
 the spin will be and takes longer time to stop.
 
 
-#### Prograde/retrograde icon
+#### Prograde/retrograde icons
 
 ![prograde](src/images/prograde.png)
 ![retrograde](src/images/retrograde.png)
@@ -111,7 +113,28 @@ The right icon is retrograde, meaning the direction opposite to the vehicle is g
 Accelerating in this direction will reduce the energy from the orbit and make it narrower.
 
 
-#### Watermark
+#### Normal/antinormal icons
+
+![normal](src/images/normal.png)
+![antinormal](src/images/antinormal.png)
+
+These two icons are pointing tangent to the prograde and retrograde, and are useful for making inclination changes (tilting your orbit).
+
+THe left one is the normal icon, this is used to tilt your orbit up, and the right one is the antinormal icon, used to tilt it down. This is useful when you are transferring between orbits since if your inclination does not match the target's inclination you may not get a successful intercept.
+
+
+#### Radial in/out icons
+
+![radialin](src/images/radialin.png)
+![radialout](src/images/radialout.png)
+
+These two icons are used to simultaneously raise apoapsis and lower periapsis.
+
+The left icon is radial in, this points "inward" 90 degrees from your trajectory and toward the planet/moon whose SOI you are in.Thrusting in this direction will raise the side of your orbit behind you and lower the side of your orbit in front of you.
+
+The right icon is radial out, this points "outward" 90 degrees from your trajectory and away from the planet/moon whose SOI you are in. Thrusting in this direction does the opposite of what the other icon does, it raises the orbit in front of you and lowers the orbit behind you.
+
+#### Watermark/Level indicator
 
 ![watermark](src/images/watermark.png)
 
@@ -124,16 +147,16 @@ I guess this is useful for aerial vehicles, but not so much in space.
 
 ### Simulation Speed Control
 
-On top left corner of the screen is a widget for controlling the speed of the simulation, from real-time to a million times faster than reality.
+On top left corner of the screen is a widget for controlling the speed of the simulation, from real-time to ten million times faster than reality.
 
 ![](screenshots/timescale.png)
 
 Clicking on one of the green triangles sets the speed to that scale.
 Leftmost is slowest and it gets faster as you go right.
-Each triangle means 10 times faster than the previous one.
-You can also change the speed by '+' and '-' keys.
+The first three triangles mean real-time, 5x speed, and 10x speed. After that, each triangle means 10 times faster than the previous one.
+You can also change the speed by '.' and ',' keys.
 
-Note that you cannot turn or accelerate the vehicle unless you're in real-time scale.
+Note that you cannot turn or accelerate the vehicle unless you're in real-time or 5x speed.
 
 You'll need it to travel distances between planets.
 
