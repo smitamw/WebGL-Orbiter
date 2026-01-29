@@ -328,16 +328,10 @@ export default class Overlay{
                 return select_obj.position.clone().cross(select_obj.velocity).normalize();
             case 'antinormal':
                 return select_obj.position.clone().cross(select_obj.velocity).normalize().negate();
-            case 'radialout':{
-                const prograde = select_obj.velocity.clone().normalize();
-                const normal = select_obj.position.clone().cross(select_obj.velocity).normalize();
-                return prograde.clone().cross(normal).normalize();
-            }
-            case 'radialin':{
-                const prograde = select_obj.velocity.clone().normalize();
-                const normal = select_obj.position.clone().cross(select_obj.velocity).normalize();
-                return prograde.clone().cross(normal).normalize().negate();
-            }
+            case 'radialout':
+                return select_obj.position.clone().normalize();
+            case 'radialin':
+                return select_obj.position.clone().normalize().negate();
             default:
                 return null;
         }
@@ -419,9 +413,8 @@ export default class Overlay{
         const normalDir = h;
         const antiNormalDir = h.clone().negate();
 
-        // Radial directions: tangent to prograde and normal (radial = prograde × normal)
-        const progradeDir = select_obj.velocity.clone().normalize();
-        const radialOutDir = progradeDir.clone().cross(normalDir).normalize();
+        // Radial directions
+        const radialOutDir = select_obj.position.clone().normalize();
         const radialInDir = radialOutDir.clone().negate();
 
         // Position normal

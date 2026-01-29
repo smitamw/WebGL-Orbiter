@@ -1,3 +1,14 @@
+Navball Texture
+---------------
+
+"navball.png" was obtained from:
+
+https://forum.kerbalspaceprogram.com/topic/63113-making-high-contrast-nav-ball/page/8/
+(and indirectly, https://i.imgur.com/pF3BC6V.png)
+
+and renamed from "pF3BC6V.png"
+
+
 The Moon's Surface textures
 ---------------------------
 

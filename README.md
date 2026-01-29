@@ -52,7 +52,6 @@ you left off.
 If you want to reset state, choose "Earth orbit" from the scenarios.
 
 
-
 ## User Interface
 
 
@@ -133,6 +132,7 @@ These two icons are used to simultaneously raise apoapsis and lower periapsis.
 The left icon is radial in, this points "inward" 90 degrees from your trajectory and toward the planet/moon whose SOI you are in.Thrusting in this direction will raise the side of your orbit behind you and lower the side of your orbit in front of you.
 
 The right icon is radial out, this points "outward" 90 degrees from your trajectory and away from the planet/moon whose SOI you are in. Thrusting in this direction does the opposite of what the other icon does, it raises the orbit in front of you and lowers the orbit behind you.
+
 
 #### Watermark/Level indicator
 
