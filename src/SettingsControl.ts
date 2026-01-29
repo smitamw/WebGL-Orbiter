@@ -88,7 +88,7 @@ export class SettingsControl{
                 input = document.createElement('input');
                 input.type = 'range';
                 input.min = '0';
-                input.max = '10';
+                input.max = '20';
                 input.step = '1';
                 input.style.width = '150px';
                 input.addEventListener('input', ((a: any, field) => (event: Event) => a[field] = parseInt((event.target as HTMLInputElement).value))(this.settings, name));

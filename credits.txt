@@ -55,15 +55,45 @@ http://planetpixelemporium.com/jupiter.html
 and renamed from "jupiter2_1k.jpg"
 
 
+Io Texture
+----------
+
+"io.png" was obtained from:
+
+https://textures.spriters-resource.com/pc_computer/celltosingularityevolutionneverends/asset/387437/
+
+and renamed from "387437.png"
+
+
 Europa Texture
 --------------
+
 "europa.jpg" was obtained from:
 
 https://www.deviantart.com/askaniy/art/Europa-Texture-Map-20K-769790967
 
 and renamed from "europa_texture_map__20k__by_askaniy_dcqbaif-fullview.jpg"
 
-Saturn and its rings texture
+
+Ganymede Texture
+----------------
+
+"ganymede.jpg" was obtained from:
+
+https://bjj.mmedia.is/data/ganymede/index.html
+
+
+Callisto Texture
+----------------
+
+"callisto.jpg" was obtained from:
+
+https://www.deviantart.com/ducn1567/art/Callisto-Texture-2K-1014817608
+
+and renamed from "callisto_texture__2k__by_ducn1567_dgs72a0-pre.jpg"
+
+
+Saturn and its rings Texture
 ----------------------------
 
 These images
@@ -76,6 +106,7 @@ were obtained from
 
 http://planetpixelemporium.com/saturn.html
 
+
 Background Star Texture
 -----------------------
 
@@ -84,6 +115,7 @@ Background Star Texture
 https://svs.gsfc.nasa.gov/3442/
 
 and renamed from "TychoSkymap_08192x04096.jpg"
+
 
 Background Star Texture, Alternate
 ----------------------------------

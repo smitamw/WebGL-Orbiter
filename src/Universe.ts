@@ -25,6 +25,9 @@ import saturnRingUrl from './images/saturnringcolor.jpg';
 import saturnRingAlphaUrl from './images/saturnringpattern.gif';
 import earthUrl from './images/land_ocean_ice_cloud_2048.jpg';
 import europaUrl from './images/europa.jpg';
+import ganymedeUrl from './images/ganymede.jpg';
+import ioUrl from './images/io.png';
+import callistoUrl from './images/callisto.jpg';
 import rocketModelUrl from './rocket.obj';
 import rocketMtlUrl from './rocket.mtl';
 import solarsailModelUrl from './solarsail.obj';
@@ -376,6 +379,63 @@ export default class Universe{
             sphereOfInfluence: 8e4,
         });
 
+        const ganymede = addPlanetLocal({
+            semimajor_axis: 1070400 / AU,
+            eccentricity: 0.0013,
+            inclination: 0.2 * rad_per_deg,
+            ascending_node: 63.552 * rad_per_deg,
+            argument_of_perihelion: 20.0 * rad_per_deg
+        },
+        {
+            name: "ganymede",
+            parent: jupiter,
+            color: "#9f9f9f",
+            texture: ganymedeUrl,
+            GM: 9887 / AU / AU / AU,
+            radius: 2634.1,
+            axialTilt: 0.2 * rad_per_deg,
+            rotationPeriod: 7.154 * day,
+            sphereOfInfluence: 1.5e5,
+        });
+
+        const io = addPlanetLocal({
+            semimajor_axis: 421700 / AU,
+            eccentricity: 0.0041,
+            inclination: 0.04 * rad_per_deg,
+            ascending_node: 43.977 * rad_per_deg,
+            argument_of_perihelion: 84.129 * rad_per_deg
+        },
+        {
+            name: "io",
+            parent: jupiter,
+            color: "#ffcc88",
+            texture: ioUrl,
+            GM: 5959 / AU / AU / AU,
+            radius: 1821.6,
+            axialTilt: 0.05 * rad_per_deg,
+            rotationPeriod: 1.769 * day,
+            sphereOfInfluence: 6e4,
+        });
+
+        const callisto = addPlanetLocal({
+            semimajor_axis: 1882700 / AU,
+            eccentricity: 0.0074,
+            inclination: 0.3 * rad_per_deg,
+            ascending_node: 298.849 * rad_per_deg,
+            argument_of_perihelion: 45.0 * rad_per_deg
+        },
+        {
+            name: "callisto",
+            parent: jupiter,
+            color: "#cfcfcf",
+            texture: callistoUrl,
+            GM: 7179 / AU / AU / AU,
+            radius: 2410.3,
+            axialTilt: 0.2 * rad_per_deg,
+            rotationPeriod: 16.689 * day,
+            sphereOfInfluence: 2.2e5,
+        });
+
         // Use icosahedron instead of sphere to make it look like uniform
         // TODO: use simplex noise to make more smooth asteroid
         const asteroidGeometry = new ModulatedIcosahedronGeometry( 1, 2, (vec) => vec.multiplyScalar(0.3 * (Math.random() - 0.5) + 1) );
@@ -480,26 +540,43 @@ export default class Universe{
         // Update sun light position first
         this.light.position.copy(this.sun.model.position);
 
-        // Update lensflare size based on sun scale, distance, and slider setting
-        const sunScale = this.sun.model.scale.x; // Sun's current scale factor
+        // Update lensflare size using Sun screen-space radius (pixels) for robust distance response
         const distance = camera.position.distanceTo(this.light.position);
-        
-        // Scale factor based on sun size (rendered size)
-        const sunSizeScale = sunScale * 1.2; // Make lensflare slightly larger than sun
-        
-        // Scale factor based on distance (closer = bigger effect)
-        // At 1 AU, distance scale is 1.0
-        const baseDistance = AU * viewScale;
-        const distanceScale = baseDistance / Math.max(distance, baseDistance * 0.1);
-        
-        // Combine scales and apply slider setting (0-10, where 10 is normal)
-        const sliderFactor = settings.lensflare_size / 10;
-        const combinedScale = sunSizeScale * Math.pow(distanceScale, 0.3) * sliderFactor;
-        
+        // Sun radius in world units: convert physical km radius to world units using viewScale and AU
+        const sunRadiusWorld = (this.sun.radius / AU) * viewScale;
+
+        // Angular radius (half-angle) in radians
+        const angularRadius = Math.atan2(sunRadiusWorld, Math.max(distance, 1e-6));
+
+        // If camera is perspective, convert angular radius to screen pixels using fov
+        let ratio = 1.0;
+        if ((camera as any).isPerspectiveCamera && (camera as any).fov) {
+            const cam = camera as THREE.PerspectiveCamera;
+            const fovRad = cam.fov * Math.PI / 180;
+            const pixelRadius = Math.tan(angularRadius) / Math.tan(fovRad / 2) * windowHalfY;
+
+            // Reference: pixel radius at 1 AU
+            const referenceDistance = AU * viewScale;
+            const referenceAngular = Math.atan2(sunRadiusWorld, Math.max(referenceDistance, 1e-6));
+            const referencePixel = Math.tan(referenceAngular) / Math.tan(fovRad / 2) * windowHalfY;
+
+            ratio = referencePixel > 0 ? (pixelRadius / referencePixel) : 1.0;
+        } else {
+            // Fallback: use angular ratio if not perspective
+            const referenceDistance = AU * viewScale;
+            const referenceAngular = Math.atan2(sunRadiusWorld, Math.max(referenceDistance, 1e-6));
+            ratio = referenceAngular > 0 ? (angularRadius / referenceAngular) : 1.0;
+        }
+
+        // Clamp ratio and apply slider
+        ratio = Math.max(0.02, Math.min(16.0, ratio));
+        const sliderFactor = settings.lensflare_size / 200;
+        const finalMultiplier = sliderFactor * ratio;
+
         // Update lensflare element sizes using stored references
         const baseSizes = [512, 512, 60, 70, 120, 70];
         this.lensflareElements.forEach((element: LensflareElement, index: number) => {
-            element.size = baseSizes[index] * combinedScale;
+            element.size = baseSizes[index] * finalMultiplier;
         });
     }
 
