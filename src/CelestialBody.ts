@@ -86,6 +86,7 @@ export class CelestialBody{
         this.quaternion = new THREE.Quaternion(0,0,0,1);
         this.angularVelocity = new THREE.Vector3(0,0,0);
         if(orbitColor) this.orbitMaterial = new THREE.LineBasicMaterial({color: orbitColor});
+        
         this.children = [];
         this.parent = parent;
         this.GM = GM || GMsun;

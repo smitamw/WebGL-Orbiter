@@ -169,7 +169,7 @@ On top right corner of the screen is a little icon.
 
 Clicking it will show a list of predefined scenarios.
 
-![Scenario selector](screenshots/scenarioSelector.jpg)
+![Scenario selector](screenshots/scenarioSelector.png)
 
 Clicking one of these items will teleport the rocket to specific location in the solar system.
 
@@ -236,7 +236,7 @@ Below the Orbital Elements control is Celestial Bodies button.
 
 If you click on it,  a little table shows up like below.
 
-![](screenshots/celestialBodies.jpg)
+![](screenshots/celestialBodies.png)
 
 Currently focused celestial body is highlighted.
 Clicking on a name of a body will make the focus move to that body.
@@ -274,7 +274,7 @@ Just below the Statistics icon is an icon for toggling setting display.
 Clicking on it will toggle the display of a panel for settings.
 Characters in parentheses indicate shortcut keys.
 
-![](screenshots/settings.jpg)
+![](screenshots/settings.png)
 
 * Show grid - Toggles display of a grid in space.
 * Chase camera - If it's turned on, the camera will automatically face the directon of vehicle's acceleration.
