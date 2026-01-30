@@ -12,9 +12,7 @@ https://msakuta.github.io/WebGL-Orbiter/index.html
 
 ## Screenshots
 
-![](screenshots/screenshot7.PNG)
-
-![](screenshots/screenshot6.jpg)
+![](screenshots/screenshot8.PNG)
 
 ![](screenshots/screenshot1.jpg)
 
@@ -26,12 +24,17 @@ https://msakuta.github.io/WebGL-Orbiter/index.html
 
 ![](screenshots/screenshot5.jpg)
 
+![](screenshots/screenshot6.jpg)
+
+![](screenshots/screenshot7.PNG)
+
+
 ## Controls
 
 * '.' (period) key increases simulation speed of time
 * ',' (comma) key decreases simulation speed of time
-* 'W' key rotates the vehicle upward
-* 'S' key rotates the vehicle downward
+* 'W' key rotates the vehicle downward
+* 'S' key rotates the vehicle upward
 * 'A' key rotates the vehicle left
 * 'D' key rotates the vehicle right
 * 'Q' key rotates the vehicle counterclockwise
@@ -169,7 +172,7 @@ On top right corner of the screen is a little icon.
 
 Clicking it will show a list of predefined scenarios.
 
-![Scenario selector](screenshots/scenarioSelector.png)
+![Scenario selector](screenshots/scenarioSelector.PNG)
 
 Clicking one of these items will teleport the rocket to specific location in the solar system.
 
